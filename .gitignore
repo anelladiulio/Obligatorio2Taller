@@ -1,0 +1,7 @@
+usuarios.txt
+productos.txt
+
+.DS_Store
+Thumbs.db
+
+.vscode/

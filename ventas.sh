@@ -34,7 +34,20 @@ registrar() {
 }
 
 login() {
-    echo "Inicio de sesión: pendiente"
+    echo "Nombre de usuario:"
+    read usuario
+    echo "Contraseña:"
+    read contrasena
+    if [ -z "$usuario" ] || [ -z "$contrasena" ]; then
+        echo "Debe completar usuario y contraseña"
+        return
+    fi
+    if grep -qxF "$usuario:$contrasena" "$ARCHIVO_USUARIOS"; then
+        USUARIO_LOGUEADO="$usuario"
+        echo "Bienvenida, $usuario"
+    else
+        echo "Usuario o contraseña incorrectos"
+    fi
 }
 
 alta_producto() {

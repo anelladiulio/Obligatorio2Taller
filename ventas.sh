@@ -5,7 +5,32 @@ ARCHIVO_PRODUCTOS="productos.txt"
 USUARIO_LOGUEADO=""
 
 registrar() {
-    echo "Registro: pendiente"
+    echo "Nombre de usuario:"
+    read usuario
+    if [ -z "$usuario" ]; then
+        echo "El usuario no puede estar vacío"
+        return
+    fi
+    case "$usuario" in
+        *:*) echo "El usuario no puede contener el símbolo :" ; return ;;
+    esac
+    if grep -q "^$usuario:" "$ARCHIVO_USUARIOS"; then
+        echo "Ese usuario ya existe"
+        return
+    fi
+
+    echo "Contraseña:"
+    read contrasena
+    if [ -z "$contrasena" ]; then
+        echo "La contraseña no puede estar vacía"
+        return
+    fi
+    case "$contrasena" in
+        *:*) echo "La contraseña no puede contener el símbolo :" ; return ;;
+    esac
+
+    echo "$usuario:$contrasena" >> "$ARCHIVO_USUARIOS"
+    echo "Usuario registrado correctamente"
 }
 
 login() {

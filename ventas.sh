@@ -49,7 +49,7 @@ login() {
         echo "Usuario o contraseña incorrectos"
     fi
 }
-Alta_producto() {
+alta_producto() {
     local nombre descripcion precio stock
 
     while true; do

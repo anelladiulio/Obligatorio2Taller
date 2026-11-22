@@ -66,7 +66,7 @@ encontrado=0
 
 while IFS=: read -r nombre descripcion precio stock; do
 
-if [[ "${nombre,,}" == "${nombre_producto,,}" ]]; then
+if [ "$(echo "$nombre" | tr '[:upper:]' '[:lower:]')" = "$(echo "$nombre_producto" | tr '[:upper:]' '[:lower:]')" ]; then
 encontrado=1
 break
 fi
@@ -102,7 +102,7 @@ fi
 while IFS=: read -r nombre descripcion precio stock_actual || [ -n "$nombre" ]; do
 
 
-if [[ "${nombre,,}" == "${nombre_producto,,}" ]]; then
+if [ "$(echo "$nombre" | tr '[:upper:]' '[:lower:]')" = "$(echo "$nombre_producto" | tr '[:upper:]' '[:lower:]')" ]; then
 
         printf '%s:%s:%s:%s\n' "$nombre" "$descripcion" "$precio" "$nuevo_stock"
     else

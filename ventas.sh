@@ -55,7 +55,75 @@ alta_producto() {
 }
 
 vender() {
-    echo "Venta de producto: pendiente"
+    echo "Nombre del producto:"
+read nombre_producto
+
+    if [ -z "$nombre_producto" ]; then
+        echo "El nombre no puede estar vacio"
+        return
+    fi
+encontrado=0
+
+while IFS=: read -r nombre descripcion precio stock; do
+
+if [ "$(echo "$nombre" | tr '[:upper:]' '[:lower:]')" = "$(echo "$nombre_producto" | tr '[:upper:]' '[:lower:]')" ]; then
+encontrado=1
+break
+fi
+done < "$ARCHIVO_PRODUCTOS"
+
+if [ "$encontrado" -eq 0 ]; then
+echo "El producto no existe"
+return
+fi
+
+echo "Cantidad que desea comprar:"
+read cantidad
+
+if ! [[ "$cantidad" =~ ^[1-9][0-9]*$ ]]; then
+echo "Debe ingresar un numero entero positivo"
+return
+fi
+
+if [ "$cantidad" -gt "$stock" ]; then
+echo "Stock insuficiente. Unidades disponibles: $stock"
+return
+fi
+
+nuevo_stock=$((stock - cantidad))
+
+archivo_temporal=$(mktemp "${ARCHIVO_PRODUCTOS}.XXXXXX")
+
+if [ -z "$archivo_temporal" ]; then
+echo "Error al crear el archivo temporal"
+return
+fi
+
+while IFS=: read -r nombre descripcion precio stock_actual || [ -n "$nombre" ]; do
+
+
+if [ "$(echo "$nombre" | tr '[:upper:]' '[:lower:]')" = "$(echo "$nombre_producto" | tr '[:upper:]' '[:lower:]')" ]; then
+
+        printf '%s:%s:%s:%s\n' "$nombre" "$descripcion" "$precio" "$nuevo_stock"
+    else
+        printf '%s:%s:%s:%s\n' "$nombre" "$descripcion" "$precio" "$stock_actual"
+    fi
+
+done < "$ARCHIVO_PRODUCTOS" > "$archivo_temporal"
+
+
+if mv "$archivo_temporal" "$ARCHIVO_PRODUCTOS"; then
+    echo "Venta realizada correctamente"
+    echo "Producto: $nombre_producto"
+    echo "Cantidad vendida: $cantidad"
+    echo "Stock restante: $nuevo_stock"
+else
+    rm -f "$archivo_temporal"
+    echo "Error al actualizar el archivo de productos"
+    return
+fi
+
+
 }
 
 touch "$ARCHIVO_USUARIOS" "$ARCHIVO_PRODUCTOS"

@@ -49,10 +49,59 @@ login() {
         echo "Usuario o contraseña incorrectos"
     fi
 }
-
 alta_producto() {
-    echo "Alta de producto: pendiente"
+    local nombre descripcion precio stock
+
+    while true; do
+        echo "Nombre del producto:"
+        read nombre
+        if [ -z "$nombre" ]; then
+            echo "El nombre no puede estar vacio"
+        elif [[ "$nombre" == *":"* ]]; then
+            echo "El nombre no puede contener el símbolo :"
+        elif [ -f "$ARCHIVO_PRODUCTOS" ] && cut -d ":" -f 1 "$ARCHIVO_PRODUCTOS" | grep -qxiF "$nombre"; then
+            echo "Ese producto ya existe"
+        else
+            break
+        fi
+    done
+
+    while true; do
+        echo "Descripcion:"
+        read descripcion
+        if [ -z "$descripcion" ]; then
+            echo "La descripcion no puede estar vacia"
+        elif [[ "$descripcion" == *":"* ]]; then
+            echo "La descripcion no puede contener el símbolo :"
+        else
+            break
+        fi
+    done
+
+    while true; do
+        echo "Precio:"
+        read precio
+        if ! [[ "$precio" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+            echo "Debe ingresar un precio valido"
+        else
+            break
+        fi
+    done
+
+    while true; do
+        echo "Stock:"
+        read stock
+        if ! [[ "$stock" =~ ^[0-9]+$ ]]; then
+            echo "Debe ingresar un numero entero"
+        else
+            break
+        fi
+    done
+
+    printf '%s:%s:%s:%s\n' "$nombre" "$descripcion" "$precio" "$stock" >> "$ARCHIVO_PRODUCTOS"
+    echo "Producto agregado correctamente"
 }
+
 
 vender() {
     echo "Nombre del producto:"
